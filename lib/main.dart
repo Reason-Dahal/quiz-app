@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/ui/screens/auth/auth_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
@@ -29,26 +36,27 @@ class _MyHomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple[300],
-        title: Text("Quiz App", style: TextStyle(fontSize: 30)),
-        centerTitle: true,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text("Reason"),
-              accountEmail: Text("rsondahal@gmail.com"),
-              currentAccountPicture: Icon(Icons.person),
-              currentAccountPictureSize: Size(30, 30),
-            ),
-            ListTile(
-              leading: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
-            ),
-          ],
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.purple[300],
+      //   title: Text("Quiz App", style: TextStyle(fontSize: 30)),
+      //   centerTitle: true,
+      // ),
+      // drawer: Drawer(
+      //   child: ListView(
+      //     children: [
+      //       UserAccountsDrawerHeader(
+      //         accountName: Text("Reason"),
+      //         accountEmail: Text("rsondahal@gmail.com"),
+      //         currentAccountPicture: Icon(Icons.person),
+      //         currentAccountPictureSize: Size(30, 30),
+      //       ),
+      //       ListTile(
+      //         leading: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      body: LoginPage(),
     );
   }
 }

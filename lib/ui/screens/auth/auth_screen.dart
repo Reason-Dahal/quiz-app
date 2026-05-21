@@ -1,0 +1,141 @@
+import "package:flutter/material.dart";
+import "package:quiz_app/core/services/auth_service.dart";
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _email = TextEditingController();
+
+  final TextEditingController _password = TextEditingController();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final _authService = AuthService();
+
+  bool islogin = true;
+  bool isloading = false;
+
+  void signUp() async {
+    setState(() {
+      isloading = true;
+    });
+    try {
+      if (islogin) {
+        _authService.signIn(_email.text.trim(), _password.text.trim());
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Login successfull")));
+      } else {
+        _authService.signUp(_email.text.trim(), _password.text.trim());
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Signup sucessful")));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+    if (mounted) {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  islogin ? "Login" : "Sign Up",
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 30),
+
+                TextFormField(
+                  controller: _email,
+                  decoration: InputDecoration(
+                    labelText: "Username",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.person),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Enter username";
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                TextFormField(
+                  controller: _password,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.lock),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Enter password";
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 30),
+
+                isloading
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: signUp,
+                          child: Text(
+                            islogin ? "login" : "signup",
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                const SizedBox(height: 10),
+
+                TextButton(
+                  onPressed: () => setState(() => islogin = !islogin),
+                  child: Text(
+                    islogin ? 'Create an account' : 'I already have an account',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
