@@ -29,6 +29,9 @@ class _AuthScreenState extends State<AuthScreen> {
         ).showSnackBar(SnackBar(content: Text("Login successfull")));
       } else {
         await _authService.signUp(_email.text.trim(), _password.text.trim());
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Sign up successfull")));
       }
     } catch (e) {
       if (mounted) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quizapp/core/services/auth_service.dart';
 import 'package:quizapp/ui/screens/auth/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:quizapp/ui/screens/home/home_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -16,10 +18,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Pro Quiz App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: AuthScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      home: StreamBuilder(
+        stream: AuthService().authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.hasData) {
+            return HomeScreen();
+          }
+          return const AuthScreen();
+        },
+      ),
     );
   }
 }
