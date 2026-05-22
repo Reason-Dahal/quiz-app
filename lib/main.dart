@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/core/services/auth_service.dart';
 import 'package:quiz_app/ui/screens/auth/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:quiz_app/ui/screens/home/home_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,43 +22,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'QuizApp',
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: StreamBuilder(
+        stream: AuthService().authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
+          if (snapshot.hasData) {
+            return HomeScreen();
+          }
+          return const AuthScreen();
+        },
+      ),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+// class HomePage extends StatefulWidget {
+//   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _MyHomePageState();
-}
+//   @override
+//   State<HomePage> createState() => _MyHomePageState();
+// }
 
-class _MyHomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.purple[300],
-      //   title: Text("Quiz App", style: TextStyle(fontSize: 30)),
-      //   centerTitle: true,
-      // ),
-      // drawer: Drawer(
-      //   child: ListView(
-      //     children: [
-      //       UserAccountsDrawerHeader(
-      //         accountName: Text("Reason"),
-      //         accountEmail: Text("rsondahal@gmail.com"),
-      //         currentAccountPicture: Icon(Icons.person),
-      //         currentAccountPictureSize: Size(30, 30),
-      //       ),
-      //       ListTile(
-      //         leading: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      body: LoginPage(),
-    );
-  }
-}
+// class _MyHomePageState extends State<HomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       // ),
+//       body: AuthScreen (),
+//     );
+//   }
+// }

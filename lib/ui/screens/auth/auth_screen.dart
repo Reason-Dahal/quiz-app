@@ -1,14 +1,14 @@
 import "package:flutter/material.dart";
 import "package:quiz_app/core/services/auth_service.dart";
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<AuthScreen> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<AuthScreen> {
   final TextEditingController _email = TextEditingController();
 
   final TextEditingController _password = TextEditingController();
@@ -26,13 +26,13 @@ class _LoginPageState extends State<LoginPage> {
     });
     try {
       if (islogin) {
-        _authService.signIn(_email.text.trim(), _password.text.trim());
+        await _authService.signIn(_email.text.trim(), _password.text.trim());
 
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Login successfull")));
       } else {
-        _authService.signUp(_email.text.trim(), _password.text.trim());
+        await _authService.signUp(_email.text.trim(), _password.text.trim());
 
         ScaffoldMessenger.of(
           context,
