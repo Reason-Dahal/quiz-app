@@ -66,9 +66,9 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.deepPurple,
                     size: 36,
                   ),
-                  // onTap: () {
-                  //   Navigator.pushNamed(context, '/quiz', arguments: category);
-                  // },
+                  onTap: () {
+                    Navigator.pushNamed(context, '/quiz', arguments: category);
+                  },
                 ),
               );
             },

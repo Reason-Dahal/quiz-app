@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizapp/core/routes/app_router.dart';
 import 'package:quizapp/core/services/auth_service.dart';
 import 'package:quizapp/ui/screens/auth/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
           return const AuthScreen();
         },
       ),
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }

@@ -13,7 +13,7 @@ class QuestionModel {
     return QuestionModel(
       question: map['question'] ?? "",
       options: List<String>.from(map['options'] ?? []),
-      correctAnswer: map['correct_answer'] ?? "",
+      correctAnswer: map['correct_answer'] ?? 0,
     );
   }
 }

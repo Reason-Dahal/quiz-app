@@ -6,9 +6,7 @@ class DatabaseService {
 
   Future<List<String>> getCategories() async {
     final snapshot = await _firestore.collection('categories').get();
-    print("respnse: $snapshot");
     final result = snapshot.docs.map((doc) => doc['name'] as String).toList();
-    print("data: $result");
     return result;
   }
 
