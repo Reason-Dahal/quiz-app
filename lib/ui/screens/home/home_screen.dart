@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/core/services/auth_service.dart';
-import 'package:quiz_app/ui/screens/home/categories_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,8 +34,37 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
-              onTap: () async {
-                await authService.signOut();
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text("Do you want to LogOut?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancle"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            authService.signOut();
+                            Navigator.pop(context);
+                          },
+                          child: Text("LogOut"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text("History"),
+              onTap: () {
+                Navigator.pushNamed(context, '/history');
               },
             ),
           ],

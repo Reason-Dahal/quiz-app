@@ -55,9 +55,7 @@ class _QuizScreenState extends State<QuizScreen> {
         currentIndex++;
       });
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Quiz Completed")));
+      Navigator.pushNamed(context, '/result');
     }
   }
 

@@ -21,7 +21,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         backgroundColor: Colors.transparent,
       ),
 
-      // ❌ IMPORTANT FIX: removed overlap issue
       extendBodyBehindAppBar: true,
 
       body: Container(
