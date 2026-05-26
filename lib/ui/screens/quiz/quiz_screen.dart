@@ -16,6 +16,8 @@ class _QuizScreenState extends State<QuizScreen> {
 
   int currentIndex = 0;
   int correct = 0, incorrect = 0, skipped = 0;
+  int? selectedAnswer;
+  bool answerSubmitted = false;
 
   @override
   void initState() {
@@ -33,6 +35,42 @@ class _QuizScreenState extends State<QuizScreen> {
         _questions = fetchedQuestions;
         isLoading = false;
       });
+    }
+  }
+
+  void checkAnswer(int selected) {
+    if (!answerSubmitted) {
+      setState(() {
+        selectedAnswer = selected;
+        answerSubmitted = true;
+      });
+
+      if (selected == _questions[currentIndex].correctAnswer) {
+        correct++;
+      } else {
+        incorrect++;
+      }
+
+      // Move to next question after 1.5 seconds
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        if (mounted) {
+          nextQuestion();
+        }
+      });
+    }
+  }
+
+  void nextQuestion() {
+    if (currentIndex < _questions.length - 1) {
+      setState(() {
+        currentIndex++;
+        selectedAnswer = null;
+        answerSubmitted = false;
+      });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Quiz completed")));
     }
   }
 
@@ -86,25 +124,35 @@ class _QuizScreenState extends State<QuizScreen> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
-            ...q.options.map(
-              (option) => Padding(
+            ...q.options.asMap().entries.map((entry) {
+              final optionIndex = entry.key;
+              final option = entry.value;
+
+              Color getButtonColor() {
+                if (!answerSubmitted) return Colors.blue;
+                if (optionIndex == q.correctAnswer) return Colors.green;
+                if (optionIndex == selectedAnswer) return Colors.red;
+                return Colors.blue;
+              }
+
+              return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: getButtonColor(),
                     padding: const EdgeInsets.all(16),
                     textStyle: const TextStyle(fontSize: 18),
                   ),
-                  // onPressed: () => checkAnswer(option),
-                  onPressed: () {},
+                  onPressed: () => checkAnswer(optionIndex),
                   child: Text(option),
                 ),
-              ),
-            ),
+              );
+            }),
             const Spacer(),
             TextButton(
               onPressed: () {
                 skipped++;
-                // nextQuestion();
+                nextQuestion();
               },
               child: const Text(
                 'Skip Question',
