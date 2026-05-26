@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:quiz_app/core/routes/app_router.dart';
 import 'package:quiz_app/core/services/auth_service.dart';
 import 'package:quiz_app/ui/screens/auth/auth_screen.dart';
 import 'package:quiz_app/ui/screens/home/home_screen.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Quiz App',
+      onGenerateRoute: AppRouter.generate,
 
       home: StreamBuilder(
         stream: AuthService().authStateChanges,

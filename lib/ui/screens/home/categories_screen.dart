@@ -118,7 +118,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       ),
 
                       onTap: () {
-                        // handle category click
+                        Navigator.pushNamed(
+                          context,
+                          '/quiz',
+                          arguments: category,
+                        );
                       },
                     ),
                   );

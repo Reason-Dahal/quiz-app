@@ -116,12 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CategoriesScreen(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/categories');
                 },
 
                 child: const Text(
