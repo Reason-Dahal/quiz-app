@@ -1,5 +1,9 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
+import "package:quizapp/core/services/auth_service.dart";
 import "package:quizapp/core/services/database_service.dart";
+import "package:quizapp/data/models/history_model.dart";
 import "package:quizapp/data/models/question_model.dart";
 
 class QuizScreen extends StatefulWidget {
@@ -19,6 +23,10 @@ class _QuizScreenState extends State<QuizScreen> {
   int? selectedAnswer;
   bool answerSubmitted = false;
 
+  int timeLeft = 15;
+  int totalTimeTaken = 0;
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +43,28 @@ class _QuizScreenState extends State<QuizScreen> {
         _questions = fetchedQuestions;
         isLoading = false;
       });
+      if (_questions.isNotEmpty) {
+        startTimer();
+      }
     }
+  }
+
+  void startTimer() {
+    timer?.cancel();
+    timeLeft = 15;
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (mounted) {
+        setState(() {
+          if (timeLeft > 0) {
+            timeLeft--;
+            totalTimeTaken++;
+          } else {
+            skipped++;
+            nextQuestion();
+          }
+        });
+      }
+    });
   }
 
   void checkAnswer(int selected) {
@@ -67,11 +96,39 @@ class _QuizScreenState extends State<QuizScreen> {
         selectedAnswer = null;
         answerSubmitted = false;
       });
+      startTimer();
     } else {
+      timer?.cancel();
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Quiz completed")));
+      finishQuiz();
     }
+  }
+
+  Future<void> finishQuiz() async {
+    final user = AuthService().currentUser;
+    int score = correct * 10;
+
+    if (user != null) {
+      final history = HistoryModel(
+        category: widget.category,
+        score: score,
+        correct: correct,
+        incorrect: incorrect,
+        skipped: skipped,
+        timeTaken: totalTimeTaken,
+        date: DateTime.now(),
+      );
+      await DatabaseService().saveQuizResult(user.uid, history);
+    }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -104,7 +161,14 @@ class _QuizScreenState extends State<QuizScreen> {
           Center(
             child: Padding(
               padding: const EdgeInsets.only(right: 16.0),
-              // child: Text('$timeLeft s', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.orangeAccent)),
+              child: Text(
+                '$timeLeft s',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent,
+                ),
+              ),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:quizapp/data/models/history_model.dart";
 import "package:quizapp/data/models/question_model.dart";
 
 class DatabaseService {
@@ -21,4 +22,14 @@ class DatabaseService {
         .map((doc) => QuestionModel.fromJson(doc.data()))
         .toList();
   }
+
+  Future<void> saveQuizResult(String userId, HistoryModel history) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .add(history.toMap());
+  }
+
+  
 }
