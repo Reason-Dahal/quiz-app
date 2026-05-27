@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz_app/core/services/auth_service.dart';
 import 'package:quiz_app/core/services/database_service.dart';
+import 'package:quiz_app/data/model/history_model.dart';
 import 'package:quiz_app/data/model/question_model.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -19,7 +24,29 @@ class _QuizScreenState extends State<QuizScreen> {
   int currentIndex = 0;
   int correct = 0;
   int incorrect = 0;
-  int skiped = 0;
+  int skipped = 0;
+
+  Timer? timer;
+  int totalTime = 0;
+  int timeLeft = 15;
+
+  void startTimer() {
+    timer?.cancel();
+    timeLeft = 15;
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (mounted) {
+        setState(() {
+          if (timeLeft > 0) {
+            timeLeft--;
+            totalTime++;
+          } else {
+            skipped++;
+            nextQuestion();
+          }
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -37,6 +64,9 @@ class _QuizScreenState extends State<QuizScreen> {
         _questions = fetchQuestions;
         isLoading = false;
       });
+      if (_questions.isNotEmpty) {
+        startTimer();
+      }
     }
   }
 
@@ -54,9 +84,43 @@ class _QuizScreenState extends State<QuizScreen> {
       setState(() {
         currentIndex++;
       });
+      startTimer();
     } else {
-      Navigator.pushNamed(context, '/result');
+      timer?.cancel();
+      saveQuiz();
+      Navigator.pushNamed(
+        context,
+        '/result',
+        arguments: {
+          'correct': correct,
+          'incorrect': incorrect,
+          'skipped': skipped,
+          'totalTime': totalTime,
+        },
+      );
     }
+  }
+
+  Future<void> saveQuiz() async {
+    final user = AuthService().currentUser;
+    if (user != null) {
+      final history = HistoryModel(
+        category: widget.category,
+        score: correct * 10,
+        correct: correct,
+        incorrect: incorrect,
+        skipped: skipped,
+        timeTaken: totalTime,
+        date: DateTime.now(),
+      );
+      await DatabaseService().saveHistory(user.uid, history);
+    }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -117,6 +181,8 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
               ],
             ),
+
+            Text("$timeLeft s"),
 
             const SizedBox(height: 10),
 

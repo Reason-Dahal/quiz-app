@@ -17,7 +17,10 @@ class AppRouter {
       case '/categories':
         return MaterialPageRoute(builder: (_) => CategoriesScreen());
       case '/result':
-        return MaterialPageRoute(builder: (_) => ResultScreen());
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => ResultScreen(resultData: args),
+        );
       case '/history':
         return MaterialPageRoute(builder: (_) => HistoryScreen());
 
