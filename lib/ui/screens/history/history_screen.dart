@@ -33,8 +33,48 @@ class _HistoryScreenState extends State<HistoryScreen> {
         title: const Text("History"),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        // backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text(
+                      "Are you sure you want to delete all your history? This cant be undone!",
+                    ),
+                    title: Text("Delete History "),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancle"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await DatabaseService().deleteHistory();
+
+                          setState(() {
+                            _historyFuture = _db.getHistory();
+                          });
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text("Delete"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.delete, color: Colors.red),
+          ),
+        ],
       ),
 
       body: FutureBuilder<List<HistoryModel>>(

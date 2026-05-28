@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quiz_app/data/model/history_model.dart';
@@ -21,9 +23,13 @@ class DatabaseService {
         .collection('questions')
         .get();
 
-    return snapshot.docs
+    final questions = snapshot.docs
         .map((doc) => QuestionModel.fromJson(doc.data()))
         .toList();
+
+    questions.shuffle(Random());
+
+    return questions.take(10).toList();
   }
 
   Future<void> saveHistory(String userId, HistoryModel history) async {
@@ -42,10 +48,26 @@ class DatabaseService {
         .doc(userId)
         .collection("history")
         .orderBy("date", descending: true)
+        .limit(5)
         .get();
 
     return snapshot.docs
         .map((doc) => HistoryModel.fromMap(doc.data()))
         .toList();
+  }
+
+  Future<void> deleteHistory() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final historyCollection = await _firestore
+        .collection("users")
+        .doc(userId)
+        .collection("history")
+        .get();
+
+    WriteBatch batch = _firestore.batch();
+    for (var doc in historyCollection.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/core/services/auth_service.dart';
 import 'package:quiz_app/core/services/database_service.dart';
