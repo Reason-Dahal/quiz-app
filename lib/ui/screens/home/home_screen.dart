@@ -20,6 +20,10 @@ class HomeScreen extends StatelessWidget {
             },
             icon: const Icon(Icons.logout),
           ),
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () => Navigator.pushNamed(context, '/history'),
+          ),
         ],
       ),
 

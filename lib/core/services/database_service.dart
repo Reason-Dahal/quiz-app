@@ -18,9 +18,11 @@ class DatabaseService {
         .collection('questions')
         .get();
 
-    return snapshot.docs
+    final response = snapshot.docs
         .map((doc) => QuestionModel.fromJson(doc.data()))
         .toList();
+
+    return response;
   }
 
   Future<void> saveQuizResult(String userId, HistoryModel history) async {
@@ -31,5 +33,31 @@ class DatabaseService {
         .add(history.toMap());
   }
 
-  
+  Stream<List<HistoryModel>> getUserHistory(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('history')
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => HistoryModel.fromMap(doc.data()))
+              .toList(),
+        );
+  }
+
+  Future<void> deleteUserHistory(String userId) async {
+    final historyCollection = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('history');
+    final snapshots = await historyCollection.get();
+
+    WriteBatch batch = _firestore.batch();
+    for (var doc in snapshots.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+  }
 }

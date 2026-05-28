@@ -38,9 +38,12 @@ class _QuizScreenState extends State<QuizScreen> {
       widget.category,
     );
 
+    print("Fetched Questions: $fetchedQuestions[0].question");
+
     if (mounted) {
       setState(() {
         _questions = fetchedQuestions;
+        print("Fetched Questionssssss: $_questions");
         isLoading = false;
       });
       if (_questions.isNotEmpty) {
@@ -123,6 +126,18 @@ class _QuizScreenState extends State<QuizScreen> {
       );
       await DatabaseService().saveQuizResult(user.uid, history);
     }
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(
+      context,
+      '/result',
+      arguments: {
+        'score': score,
+        'correct': correct,
+        'incorrect': incorrect,
+        'skipped': skipped,
+        'timeTaken': totalTimeTaken,
+      },
+    );
   }
 
   @override
