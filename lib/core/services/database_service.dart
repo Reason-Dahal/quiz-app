@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,8 +24,34 @@ class DatabaseService {
         .collection('questions')
         .get();
 
+    return snapshot.docs
+        .map((doc) => QuestionModel.fromJson(doc.data(), doc.id))
+        .toList();
+
+    // final questions = snapshot.docs
+    //     .map((doc) => QuestionModel.fromJson(doc.data(), doc.id))
+    //     .toList();
+
+    // questions.shuffle(Random());
+
+    // return questions.take(10).toList();
+  }
+
+  Future<List<QuestionModel>> getQuestionsByCategoriesForUsers(
+    String category,
+  ) async {
+    final snapshot = await _firestore
+        .collection("categories")
+        .doc(category)
+        .collection('questions')
+        .get();
+
+    // return snapshot.docs
+    //     .map((doc) => QuestionModel.fromJson(doc.data(), doc.id))
+    //     .toList();
+
     final questions = snapshot.docs
-        .map((doc) => QuestionModel.fromJson(doc.data()))
+        .map((doc) => QuestionModel.fromJson(doc.data(), doc.id))
         .toList();
 
     questions.shuffle(Random());
@@ -69,5 +96,47 @@ class DatabaseService {
       batch.delete(doc.reference);
     }
     await batch.commit();
+  }
+
+  Future<void> addCategory(String categoryName) async {
+    await _firestore.collection('categories').doc(categoryName).set({
+      "name": categoryName,
+    });
+  }
+
+  Future<void> addQuestion(String category, QuestionModel question) async {
+    await _firestore
+        .collection('categories')
+        .doc(category)
+        .collection('questions')
+        .add(question.toJson());
+  }
+
+  Future<void> updateQuestion(String category, QuestionModel question) async {
+    await _firestore
+        .collection('categories')
+        .doc(category)
+        .collection('questions')
+        .doc(question.id)
+        .update(question.toJson());
+  }
+
+  Future<void> deleteQuestion(String category, String questionId) async {
+    await _firestore
+        .collection('categories')
+        .doc(category)
+        .collection('questions')
+        .doc(questionId)
+        .delete();
+  }
+
+  Future<void> updateCategory(String oldName, String newName) async {
+    await _firestore.collection('categories').doc(oldName).update({
+      "name": newName,
+    });
+  }
+
+  Future<void> deleteCategory(String category) async {
+    await _firestore.collection('categories').doc(category).delete();
   }
 }

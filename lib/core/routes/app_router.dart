@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/ui/screens/admin/admin_screen.dart';
 import 'package:quiz_app/ui/screens/auth/auth_screen.dart';
 import 'package:quiz_app/ui/screens/history/history_screen.dart';
 import 'package:quiz_app/ui/screens/home/categories_screen.dart';
@@ -13,6 +14,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const AuthScreen());
       case '/home':
         return MaterialPageRoute(builder: (_) => HomeScreen());
+      case '/admin':
+        return MaterialPageRoute(builder: (_) => AdminScreen());
 
       case '/categories':
         return MaterialPageRoute(builder: (_) => CategoriesScreen());

@@ -54,9 +54,8 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> _fetchQuestions() async {
-    final fetchQuestions = await DatabaseService().getQuestionsByCategories(
-      widget.category,
-    );
+    final fetchQuestions = await DatabaseService()
+        .getQuestionsByCategoriesForUsers(widget.category);
 
     if (mounted) {
       setState(() {
@@ -258,6 +257,18 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   );
                 },
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  skipped++;
+                  nextQuestion();
+                },
+                child: const Text(
+                  'Skip Question',
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
               ),
             ),
           ],

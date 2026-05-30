@@ -51,7 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextButton(
                           onPressed: () {
                             authService.signOut();
-                            Navigator.pop(context);
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                "/auth",
+                                (route) => false,
+                              );
+                            }
                           },
                           child: Text("LogOut"),
                         ),
@@ -68,6 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushNamed(context, '/history');
               },
             ),
+            // ListTile(
+            //   leading: const Icon(Icons.admin_panel_settings),
+            //   title: const Text("Admin"),
+            //   onTap: () {
+            //     Navigator.pushNamed(context, '/admin');
+            //   },
+            // ),
           ],
         ),
       ),
@@ -104,11 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.wine_bar_rounded,
-                size: 100,
-                color: Colors.white,
-              ),
+              const Icon(Icons.question_mark, size: 100, color: Colors.white),
 
               const SizedBox(height: 25),
 
