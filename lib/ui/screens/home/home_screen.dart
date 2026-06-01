@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/core/services/auth_service.dart';
 
+import 'package:quiz_app/ui/screens/home/drawer/account_drawer.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -14,76 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff89F7FE), Color(0xff66A6FF)],
-                ),
-              ),
-              accountName: Text("Welcome User"),
-              accountEmail: Text("quizapp@gmail.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, color: Colors.blue, size: 35),
-              ),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text("Logout"),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Center(child: Text("LogOut")),
-                      content: Text("Do you want to logout?"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Cancle"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            authService.signOut();
-                            if (context.mounted) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                "/auth",
-                                (route) => false,
-                              );
-                            }
-                          },
-                          child: Text("LogOut"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: const Text("History"),
-              onTap: () {
-                Navigator.pushNamed(context, '/history');
-              },
-            ),
-            // ListTile(
-            //   leading: const Icon(Icons.admin_panel_settings),
-            //   title: const Text("Admin"),
-            //   onTap: () {
-            //     Navigator.pushNamed(context, '/admin');
-            //   },
-            // ),
-          ],
-        ),
-      ),
+      drawer: const AccountDrawer(),
 
       appBar: AppBar(
         elevation: 0,

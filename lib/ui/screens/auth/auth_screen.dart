@@ -47,8 +47,16 @@ class _LoginPageState extends State<AuthScreen> {
       } else {
         await _authService.signUp(_email.text.trim(), _password.text.trim());
 
-        if (!mounted) return;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .set({
+              'username': _email.text.split('@')[0],
+              'email': _email.text.trim(),
+              'createdAt': FieldValue.serverTimestamp(),
+            });
 
+        if (!mounted) return;
         Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
       }
     } catch (e) {
@@ -139,7 +147,9 @@ class _LoginPageState extends State<AuthScreen> {
                 const SizedBox(height: 10),
 
                 TextButton(
-                  onPressed: () => setState(() => islogin = !islogin),
+                  onPressed: () => setState(() {
+                    islogin = !islogin;
+                  }),
                   child: Text(
                     islogin ? 'Create an account' : 'I already have an account',
                   ),
