@@ -23,6 +23,7 @@ class _LoginPageState extends State<AuthScreen> {
   bool isloading = false;
 
   void signUp() async {
+    if (!formKey.currentState!.validate()) return;
     setState(() {
       isloading = true;
     });
