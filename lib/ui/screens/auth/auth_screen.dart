@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:quiz_app/core/services/auth_service.dart";
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -28,15 +30,26 @@ class _LoginPageState extends State<AuthScreen> {
       if (islogin) {
         await _authService.signIn(_email.text.trim(), _password.text.trim());
 
-        ScaffoldMessenger.of(
+        final roleDoc = await FirebaseFirestore.instance
+            .collection('usersRole')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get();
+
+        final role = (roleDoc.data() as Map<String, dynamic>)['role'];
+
+        if (!mounted) return;
+
+        Navigator.pushNamedAndRemoveUntil(
           context,
-        ).showSnackBar(SnackBar(content: Text("Login successfull")));
+          role == "admin" ? "/admin" : "/home",
+          (route) => false,
+        );
       } else {
         await _authService.signUp(_email.text.trim(), _password.text.trim());
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Signup sucessful")));
+        if (!mounted) return;
+
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
       }
     } catch (e) {
       if (mounted) {

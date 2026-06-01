@@ -29,4 +29,12 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  Future<String> getUserRole() async {
+    final uid = _auth.currentUser!.uid;
+
+    final doc = await _database.collection('usersRole').doc(uid).get();
+
+    return doc.data()?['role'] ?? 'user';
+  }
 }
