@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quiz_app/ui/screens/change_password/change_password_screen.dart';
 
 class AccountDrawer extends StatefulWidget {
   const AccountDrawer({super.key});
@@ -197,6 +198,30 @@ class _AccountDrawerState extends State<AccountDrawer> {
           const Divider(),
 
           ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text("History"),
+            onTap: () {
+              Navigator.pushNamed(context, '/history');
+            },
+          ),
+
+          const Divider(),
+
+          ListTile(
+            title: const Text('Change Password'),
+            leading: const Icon(Icons.lock),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordScreen(),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),
             onTap: () {
@@ -230,13 +255,6 @@ class _AccountDrawerState extends State<AccountDrawer> {
                   );
                 },
               );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text("History"),
-            onTap: () {
-              Navigator.pushNamed(context, '/history');
             },
           ),
         ],

@@ -37,4 +37,64 @@ class AuthService {
 
     return doc.data()?['role'] ?? 'user';
   }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+
+      if (user == null) {
+        throw Exception('No user logged in');
+      }
+
+      if (currentPassword.isEmpty || newPassword.isEmpty) {
+        throw Exception('Password fields cannot be empty');
+      }
+
+      if (currentPassword == newPassword) {
+        throw Exception('New password must be different from current password');
+      }
+
+      if (newPassword.length < 6) {
+        throw Exception('New password must be at least 6 characters long');
+      }
+
+      // Re-authenticate user before changing password
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      // Update password
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw Exception('Error changing password: ${e.toString()}');
+    }
+  }
+
+  /// Handle Firebase Auth exceptions with user-friendly messages
+  String _handleAuthException(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'wrong-password':
+        return 'Current password is incorrect';
+      case 'user-not-found':
+        return 'User not found';
+      case 'invalid-email':
+        return 'Invalid email address';
+      case 'operation-not-allowed':
+        return 'Password change operation is not allowed';
+      case 'weak-password':
+        return 'New password is too weak. Please use a stronger password';
+      case 'requires-recent-login':
+        return 'Please log in again before changing your password';
+      default:
+        return e.message ?? 'An authentication error occurred';
+    }
+  }
 }
