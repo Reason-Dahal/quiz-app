@@ -15,17 +15,17 @@ class AdminDrawer extends StatelessWidget {
             child: Center(child: Icon(Icons.admin_panel_settings, size: 70)),
           ),
 
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text("Home"),
-            onTap: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                "/home",
-                (route) => false,
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.home),
+          //   title: const Text("Home"),
+          //   onTap: () {
+          //     Navigator.pushNamedAndRemoveUntil(
+          //       context,
+          //       "/home",
+          //       (route) => false,
+          //     );
+          //   },
+          // ),
 
           // ListTile(
           //   leading: const Icon(Icons.admin_panel_settings),
